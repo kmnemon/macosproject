@@ -12,6 +12,8 @@ struct ContentView: View {
     @State private var guess = ""
     @State private var guesses = [String]()
     @State private var isGameOver = false
+    @State private var isGameLose = false
+    @State private var message: String = ""
 
     @AppStorage("maximumGuesses") var maximumGuesses = 100
     @AppStorage("showGuessCount") var showGuessCount = false
@@ -51,14 +53,12 @@ struct ContentView: View {
         .alert("You win!", isPresented: $isGameOver) {
             Button("OK", action: startNewGame)
         } message: {
-            Text("Congratulations! Click OK to play again.")
+            Text("Congratulations! You are \(message), Click OK to play again.")
         }
-        .touchBar {
-            HStack {
-                Text("Guesses: \(guesses.count)/\(maximumGuesses)")
-                    .touchBarItemPrincipal()
-                Spacer(minLength: 200)
-            }
+        .alert("You lose!", isPresented: $isGameLose) {
+            Button("OK", action: startNewGame)
+        } message: {
+            Text("Better luck next time! Click OK to play again.")
         }
         .frame(width: 250)
         .frame(minHeight: 300)
@@ -70,15 +70,28 @@ struct ContentView: View {
     func submitGuess() {
         guard Set(guess).count == answerLength else { return }
         guard guess.count == answerLength else { return }
+        guard !guesses.contains(guess) else { return }
 
         let badCharacters = CharacterSet(charactersIn: "0123456789").inverted
         guard guess.rangeOfCharacter(from: badCharacters) == nil else { return }
+        
+        
 
         guesses.insert(guess, at: 0)
 
         // did the player win?
         if result(for: guess).contains("\(answerLength)b") {
             isGameOver = true
+        } else if guesses.count >= maximumGuesses {
+            isGameLose = true
+        }
+        
+        if guesses.count  < 10 {
+            message = "excellent!"
+        } else if guesses.count  < 20 {
+            message = "good!"
+        } else {
+            message = "okay..."
         }
 
         // clear their guess string
