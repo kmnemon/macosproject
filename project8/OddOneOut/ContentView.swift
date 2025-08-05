@@ -14,6 +14,8 @@ struct ContentView: View {
     @State var layout = Array(repeating: "empty", count: gridSize * gridSize)
     @State var currentLevel = 1
     @State var isGameOver = false
+    @State var wrongCount = 0
+    @State var msg = ""
 
     var body: some View {
         ZStack {
@@ -45,11 +47,18 @@ struct ContentView: View {
 
             if isGameOver {
                 VStack {
-                    Text("Game over!")
-                        .font(.largeTitle)
+                    if wrongCount >= 3 {
+                        Text("You lose!")
+                            .font(.largeTitle)
+                    } else {
+                        Text("Game over!")
+                            .font(.largeTitle)
+                    }
+                    
 
                     Button("Play Again") {
                         currentLevel = 1
+                        wrongCount = 0
                         isGameOver = false
                         createLevel()
                     }
@@ -61,13 +70,14 @@ struct ContentView: View {
                     .clipShape(.capsule)
                 }
             }
-
+            
         }
         .onAppear(perform: createLevel)
         .contentShape(Rectangle())
         .contextMenu {
             Button("Start New Game") {
                 currentLevel = 1
+                wrongCount = 0
                 isGameOver = false
                 createLevel()
             }
@@ -113,7 +123,7 @@ struct ContentView: View {
     }
 
     func createLevel() {
-        if currentLevel == 9 {
+        if currentLevel == 9 || wrongCount >= 3 {
             withAnimation {
                 isGameOver = true
             }
@@ -129,6 +139,7 @@ struct ContentView: View {
             currentLevel += 1
             createLevel()
         } else {
+            wrongCount += 1
             // they clicked the wrong animal
             if currentLevel > 1 {
                 // take the current level down by 1 if we can
