@@ -27,11 +27,18 @@ class GameScene: SKScene {
         physicsBody = SKPhysicsBody(edgeLoopFrom: frame)
         physicsWorld.gravity = CGVector.zero
 
+        startGame()
+    }
+    
+    func startGame() {
+        popAll()
+        initBubble()
+        
         for _ in 1...8 {
             createBubble()
         }
 
-        bubbleTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] timer in
+        bubbleTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { [weak self] timer in
             self?.createBubble()
         }
     }
@@ -77,7 +84,63 @@ class GameScene: SKScene {
         configurePhysics(for: bubble)
         nextBubble()
     }
+    
+    func createGameOverBubble() {
+        createBubble("G", 100, 300, 1, 0)
+        createBubble("A", 160, 300, 2, 1)
+        createBubble("M", 220, 300, 3, 2)
+        createBubble("E", 280, 300, 4, 3)
+        createBubble("O", 400, 300, 5, 4)
+        createBubble("V", 460, 300, 6, 5)
+        createBubble("E", 520, 300, 7, 6)
+        createBubble("R", 580, 300, 8, 7)
+        createBubble("!", 640, 300, 9, 0)
+        
+        createBubble("start", 400, 500, 1, 0)
 
+    }
+
+    func createBubble(_ litter: String, _ xPos: Int, _ yPos: Int, _ zPos: CGFloat, _ index: Int) {
+        // 1: create a new sprite node from our current texture
+        let bubble = SKSpriteNode(texture: bubbleTextures[index])
+
+        // 2: give it the stringified version of our current number
+        bubble.name = litter
+
+        // 3: give it a Z-position of 1, so it draws above any background
+        bubble.zPosition = zPos
+
+        // 4: create a label node with the current number, in nice, bright text
+        let label = SKLabelNode(fontNamed: "HelveticaNeue-Light")
+        label.text = bubble.name
+        label.color = NSColor.white
+        label.fontSize = 64
+
+        // 5: make the label center itself vertically and draw above the bubble
+        label.verticalAlignmentMode = .center
+        label.zPosition = 2
+
+        // 6: add the label to the bubble, then the bubble to the game scene
+        bubble.addChild(label)
+        addChild(bubble)
+
+        // 7: add the new bubble to our array for later use
+        bubbles.append(bubble)
+
+        // 8: make it appear somewhere inside our game scene
+        bubble.position = CGPoint(x: xPos, y: yPos)
+        
+        bubble.setScale(0.5)
+
+        bubble.alpha = 0
+        bubble.run(SKAction.fadeIn(withDuration: 0.5))
+    }
+    
+    func initBubble() {
+        currentBubbleTexture = 0
+        maximumNumber = 1
+    }
+    
     func nextBubble() {
         // move on to the next bubble texture
         currentBubbleTexture += 1
@@ -88,7 +151,8 @@ class GameScene: SKScene {
         }
 
         // add a random number between 1 and 3 to `maximumNumber`
-        maximumNumber += Int.random(in: 1...3)
+//        maximumNumber += Int.random(in: 1...3)
+        maximumNumber += 1
 
         // fix the mystery problem
         let strMaximumNumber = String(maximumNumber)
@@ -125,7 +189,14 @@ class GameScene: SKScene {
 
         // make sure at least one clicked node remains
         guard clickedNodes.count != 0 else { return }
-
+        
+        for node in clickedNodes {
+            if node.name?.rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) != nil {
+                startGame()
+                return
+            }
+        }
+        
         // find the lowest-numbered bubble on the screen
         let lowestBubble = bubbles.min { Int($0.name!)! < Int($1.name!)! }
         guard let bestNumber = lowestBubble?.name else { return }
@@ -135,8 +206,15 @@ class GameScene: SKScene {
             if node.name == bestNumber {
                 // they were correct – pop the bubble!
                 pop(node as! SKSpriteNode)
+                if bubbles.count == 0 {
+                    bubbleTimer?.invalidate()
+                    createGameOverBubble()
+                }
 
                 // exit the method so we don't create new bubbles
+                return
+            } else if node.name == "start" {
+                startGame()
                 return
             }
         }
@@ -163,8 +241,13 @@ class GameScene: SKScene {
 
         run(SKAction.playSoundFileNamed("pop.wav", waitForCompletion: false))
 
-        if bubbles.count == 0 {
-            bubbleTimer?.invalidate()
+
+    }
+    
+    func popAll() {
+        for bubble in bubbles {
+            pop(bubble)
         }
     }
+
 }

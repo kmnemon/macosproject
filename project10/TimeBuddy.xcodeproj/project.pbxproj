@@ -11,6 +11,7 @@
 		51F60B13280852FE007647DC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F60B12280852FE007647DC /* ContentView.swift */; };
 		51F60B15280852FF007647DC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51F60B14280852FF007647DC /* Assets.xcassets */; };
 		51F60B18280852FF007647DC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51F60B17280852FF007647DC /* Preview Assets.xcassets */; };
+		E3C389622E4308B600EE99DF /* LaunchAtLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C389612E4308AD00EE99DF /* LaunchAtLogin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		51F60B14280852FF007647DC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		51F60B17280852FF007647DC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		51F60B19280852FF007647DC /* TimeBuddy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TimeBuddy.entitlements; sourceTree = "<group>"; };
+		E3C389612E4308AD00EE99DF /* LaunchAtLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAtLogin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +54,7 @@
 		51F60B0F280852FE007647DC /* TimeBuddy */ = {
 			isa = PBXGroup;
 			children = (
+				E3C389612E4308AD00EE99DF /* LaunchAtLogin.swift */,
 				51F60B10280852FE007647DC /* TimeBuddyApp.swift */,
 				51F60B12280852FE007647DC /* ContentView.swift */,
 				51F60B14280852FF007647DC /* Assets.xcassets */,
@@ -139,6 +142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3C389622E4308B600EE99DF /* LaunchAtLogin.swift in Sources */,
 				51F60B13280852FE007647DC /* ContentView.swift in Sources */,
 				51F60B11280852FE007647DC /* TimeBuddyApp.swift in Sources */,
 			);
