@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct TimeBuddyApp: App {
+    @State private var appState = AppState()
+    
     var body: some Scene {
-        MenuBarExtra("Time Buddy", systemImage: "person.badge.clock.fill") {
+        MenuBarExtra("Time Buddy", systemImage: "clock") {
             ContentView()
+                .environment(appState)
         }
         .menuBarExtraStyle(.window)
     }

@@ -7,18 +7,21 @@
 
 import SwiftUI
 
-struct ContentView: View {
+
+struct ContentView: View {    
     @State private var timeZones = [String]()
     @State private var newTimeZone = "GMT"
+    @State private var formattedTime: DateFormatter.Style = .short
     
     @State private var selectedTimeZones = Set<String>()
     @State private var id = UUID()
     
-    var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     
     var body: some View {
         VStack {
             HStack {
+                LaunchAtLoginSettingsSection()
                 Spacer()
                 Button("Quit", systemImage: "xmark.circle.fill", action: quit)
                     .foregroundStyle(.secondary)
@@ -53,13 +56,18 @@ struct ContentView: View {
                     let timeData = timeZones.map(timeData).sorted().joined(separator: "\n")
                     NSPasteboard.general.setString(timeData, forType: .string)
                 }
+                .contextMenu {
+                    Button("Delete", role: .destructive) {
+                        deleteItems()
+                    }
+                }
             }
             
             HStack {
                 Picker("Add Time Zone", selection: $newTimeZone) {
                     ForEach(TimeZone.knownTimeZoneIdentifiers, id: \.self, content: Text.init)
                 }
-
+                
                 Button("Add") {
                     if timeZones.contains(newTimeZone) == false {
                         timeZones.append(newTimeZone)
@@ -83,14 +91,14 @@ struct ContentView: View {
     func load() {
         timeZones = UserDefaults.standard.stringArray(forKey: "TimeZones") ?? []
     }
-
+    
     func save() {
         UserDefaults.standard.set(timeZones, forKey: "TimeZones")
     }
-
+    
     func timeData(for zoneName: String) -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.timeStyle = .medium
+        dateFormatter.timeStyle = formattedTime
         dateFormatter.timeZone = TimeZone(identifier: zoneName) ?? .current
         return "\(zoneName): \(dateFormatter.string(from: .now))"
     }
@@ -99,7 +107,7 @@ struct ContentView: View {
         withAnimation {
             timeZones.removeAll(where: selectedTimeZones.contains)
         }
-
+        
         save()
     }
     
